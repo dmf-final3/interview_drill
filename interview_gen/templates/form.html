@@ -2,10 +2,10 @@
 {% load django_bootstrap5 %}
 
 {% block body %}
-    <div>🙌 지망기업과 경험을 입력하시면 면접 질답을 생성해드립니다.</div>
-    <form action="" method="POST" enctype="multipart/form-data">
+    <h3>🙌 지망기업과 경험을 입력하시면 면접 질답을 생성해드립니다.</h3>
+    <form action="{% url 'interview_gen:create' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <input type="submit">
+        <input type="submit" value="제출하기">
     </form>
 {% endblock %}
