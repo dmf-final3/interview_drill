@@ -2,12 +2,16 @@
 {% load django_bootstrap5 %}
 
 {% block body %}
-    <h2> 💡 기업 뉴스 데이터와 관련 경험을 기반으로 도출된 면접 질문입니다!</h2>
+<h2> 💡 기업 뉴스 데이터와 관련 경험을 기반으로 도출된 면접 질문입니다!</h2>
 
+<div class="container">    
     {% if generated_question %}
-        {{ generated_question | safe }}
+        <ol class="list-group list-group-flush">
+            {{ generated_question | safe }}
+        </ol>
     {% else %}
         <p>생성된 질문이 없습니다.</p>
     {% endif %}
+</div>
 
 {% endblock %}
