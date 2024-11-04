@@ -1,20 +1,28 @@
 #views.py
 from .models import InterviewGen
 from .forms import InterviewGenForm
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 #load API key and other necessary imports
-from openai import OpenAI
-from django.http import HttpResponse
 import os
+import json
+import requests
+from bs4 import BeautifulSoup
+from openai import OpenAI
 from dotenv import load_dotenv
+
 # .env 파일을 로드합니다.
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(dotenv_path)
+
 # 로드한 환경 변수에서 OPENAI_API_KEY 가져오기
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
-
+# 환경 변수에서 네이버 API 인증 정보 불러오기
+CLIENT_ID = os.getenv('NAVER_CLIENT_ID')
+CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET')
+NEWS_SEARCH_URL = "https://openapi.naver.com/v1/search/news.json"
 
 
 # Create your views here.
@@ -30,9 +38,11 @@ def create(request):
     if request.method == 'POST':
         form = InterviewGenForm(request.POST)
         if form.is_valid():
-            # 폼 데이터가 유효하면 저장
+            # 폼 데이터를 저장하고 `company_name`을 기준으로 뉴스 데이터를 저장
             interview_init = form.save()
+            get_news(interview_init)
 
+            # 이후 다른 API와의 통합을 위해 OpenAI generate 함수를 호출합니다
             generate(openai_api_key, interview_init.id)
 
             return redirect('interview_gen:question_gen', pk=interview_init.pk)  # 저장 후 리디렉션 (예: 로딩페이지or)
@@ -44,15 +54,86 @@ def create(request):
     }
     return render(request, 'form.html', context) # 다시 폼 보여주기
 
+def naver_news_crawler(company_name):
+    headers = {
+        "X-Naver-Client-Id": CLIENT_ID,
+        "X-Naver-Client-Secret": CLIENT_SECRET
+    }
+    params = {
+        "query": company_name,  # 검색어 설정
+        "display": 5,          # 출력 결과 개수 설정 (최대 10개)
+        "start": 1,
+        "sort": "sim"           # 정렬 방식: 유사도 순
+    }
+    response = requests.get(NEWS_SEARCH_URL, headers=headers, params=params)
+    
+    if response.status_code == 200:
+        news_items = response.json().get('items', [])
+        news_list = []
+        
+        for item in news_items:
+            # 각 뉴스 링크를 통해 기사 제목과 본문을 크롤링
+            url = item["link"]
+            try:
+                article_response = requests.get(url)
+                article_soup = BeautifulSoup(article_response.text, "html.parser")
+                
+                # 제목 추출
+                title = article_soup.select_one("h2#title_area").get_text() if article_soup.select_one("h2#title_area") else "제목 없음"
+                
+                # 본문 추출 (이미지 태그는 제거)
+                article_tag = article_soup.select_one("article#dic_area")
+                if article_tag:
+                    for span in article_tag.select("span.end_photo_org"):
+                        span.decompose()  # 이미지 태그 제거
+                    article = article_tag.get_text(strip=True)
+                else:
+                    article = "본문 없음"
+                
+                # 최종 뉴스 데이터 추가
+                news_item = {
+                    "title": title,
+                    "link": url,
+                    "article": article
+                }
+                news_list.append(news_item)
+            
+            except Exception as e:
+                print("Error fetching article content from URL:", url, "Error:", e)
+        
+        # 디버깅: 크롤링된 뉴스 리스트 확인
+        #print("DEBUG: 크롤링된 뉴스 리스트:", news_list)
+        return news_list
+    
+    else:
+        print("Error: 네이버 뉴스 API 호출 실패, 상태 코드:", response.status_code)
+        return []
 
-#def news (회사이름 + 뉴스 api를 통해 최신 뉴스를 검색하는 함수)
-#def concat (위에 실행된 내용 + 자소서 결합하는 함수)
+# 크롤링한 뉴스 데이터를 데이터베이스에 저장하는 함수
+def get_news(interview_init):
+    # 회사 이름을 통해 뉴스 크롤링
+    news_data = naver_news_crawler(interview_init.company_name)
+    
+    # JSON 형식의 문자열로 변환하여 news_group 컬럼에 저장
+    interview_init.news_group = news_data
+    interview_init.save()
 
 
 #def generate (위에 실행된 내용 기반으로 gpt한테 질문 만들어달라는 함수)
 def generate(api_key, pk):
     # 저장된 인터뷰 데이터 객체를 조회
     interview_init = get_object_or_404(InterviewGen, pk=pk)
+
+    # `news_group`이 JSON 형식인지 확인 후 파싱
+    try:
+        news_group = json.loads(interview_init.news_group) if interview_init.news_group else []
+    except json.JSONDecodeError:
+        news_group = []  # JSON 형식이 아니면 빈 리스트로 설정하여 오류 방지
+
+
+    # 뉴스 본문 정보를 생성
+    news_content = "\n".join([f"{item['title']}: {item['link']}\n{item['article']}" for item in news_group])
+    print(news_content)
 
     try:
         client = OpenAI(api_key=api_key)
@@ -69,28 +150,22 @@ def generate(api_key, pk):
                                     3.예/ 아니오나 명백한 답변이 있는 질문은 피하고, 
                                     4.뉴스 본문 정보에 대한 의견을 묻는 질문도 최대 2개까지 포함시켜줘.
                                     5.반향어는 최대한 삼가고 실제 지원자에게 말을 거는 듯한 말투로 질문을 작성해줘.
+                                    6.뉴스 본문 정보를 참고할때는 주식 관련이나 부정적 내용은 최대한 배제하고 회사에 대한 긍정적인 기사를 중심으로 질문을 생성해줘.
                                     면접자의 대화는 다음 조건에 맞게 생성해줘.
                                     1.입력한 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성해줘.
-                                    2.뉴스와 관련된 질문은 뉴스 본문 정보에서 답을 찾고 experience의 강점과 연결시켜줘.
+                                    2.뉴스와 관련된 질문은 뉴스 본문 정보에서 답을 찾아서 제시해줘.
                                     3.마지막으로 이 기업에서 어떤 역할을 수행할 수 있을지 잘 드러나는 답변을 작성해줘.
-                                    최종 형태는 면접 질문1, 면접 답변1, 면접 질문2, 면접 답변2...와 같은 형태로 h 태그로 감싸서 출력하고 양 끝에 코드블럭은 제거해줘.
+                                    최종 형태는 html로 표시했을때 다음과 같이 출력하고
+                                    <h2>면접 질문1</h2> <p>질문 내용1</p> <h2>면접 답변1</h2> <p>답변 내용1</p> <h2>면접 질문2</h2> <p>질문 내용2</p>
+                                    양끝에 html 코드 블럭은 제거해줘.
                                 """
                 },
-                {'role': 'user', 'content': f"""
+                {'role': 'user',
+                'content': f"""
                                                 면접자의 경험 정보 : {interview_init.experience},
-                                                뉴스 본문 정보: [파이낸셜뉴스] 글로벌 바이오센서 전문기업 아이센스가 지난 5월 28일 삼성전자가 주최한 ‘삼성 헬스 파트너 데이’에 참가해 협업 추진 사례를 발표했다고 5일 밝혔다.
-
-이번 행사는 건강 관리 플랫폼 ‘삼성 헬스(Samsung Health)’ 파트너들과 디지털 헬스 케어 비전을 공유하고 삼성 헬스 생태계 확장을 위해 삼성전자가 개최한 최초 파트너 데이다.
-
-이번 행사에서 아이센스 이광현 상무가 “삼성 헬스와 함께하는 혁신적인 혈당 모니터링”이라는 주제로 아이센스의 연속혈당측정기 제품인 케어센스 에어(CareSens Air)와 삼성 헬스 서비스와의 협업 추진 사례를 발표했다.
-
-아이센스 이광현 상무는 “삼성 헬스와의 협력을 통해 케어센스 에어 앱에서 삼성 헬스로 연속 혈당 데이터의 공유가 가능하며 삼성 헬스 앱에서 혈당에 영향을 주는 활동, 운동, 수면, 식사 등과 같은 데이터를 연속혈당 데이터와 같이 볼 수 있어 사용자의 건강한 생활 습관 형성을 위한 인사이트를 제공할 수 있는 의미 있는 협업 사례”라고 설명했다. 또한, “향후 삼성전자의 갤럭시 워치와의 추가적인 협업을 통해 사용자들에게 언제 어디서나 자신의 혈당을 모니터링 하면서 건강을 관리할 수 있도록 하자”라고 제안했다.
-
-아이센스는 삼성 헬스 파트너로 참여하면서 삼성 헬스 소프트웨어 개발 키트(SDK)를 기반으로 건강관리 서비스를 추진하는 많은 파트너들사에게 연속혈당측정 데이터를 제공할 예정이다. 이를 통해 삼성 헬스 생태계 확장과 케어센스 에어 간 시너지를 극대화할 방침이다.
-
-아이센스 남학현 대표이사도 “이번 행사에서 케어센서 에어 제품이 삼성 헬스 앱과 시너지를 낼 수 있는 점을 소개할 수 있어 기쁘다”라며 “앞으로도 지속적인 기술 혁신과 글로벌 시장 확대를 추진하고 삼성 헬스와의 협업을 통해 연속혈당측정 데이터가 소비자로부터 조금 더 의미 있게 활용될 수 있도록 노력할 계획”이라고 부연했다.
+                                                뉴스 본문 정보: {news_content}
                                             """
-                },    
+                }    
             ]
         )
 
@@ -100,7 +175,6 @@ def generate(api_key, pk):
         # 생성된 질문을 인터뷰 객체에 저장하고 데이터베이스에 업데이트
         interview_init.generated_question = questions
         interview_init.save()
-
     
     except Exception as e:
         # API 호출 중 발생하는 오류를 디버깅하기 위해 예외 메시지 출력
