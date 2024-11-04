@@ -91,49 +91,40 @@ def naver_news_crawler(company_name):
                     article = "본문 없음"
                 
                 # 최종 뉴스 데이터 추가
-                news_item = {
-                    "title": title,
-                    "link": url,
-                    "article": article
-                }
+                news_item = f"{title}: {url}\n{article}"
                 news_list.append(news_item)
             
             except Exception as e:
                 print("Error fetching article content from URL:", url, "Error:", e)
         
-        # 디버깅: 크롤링된 뉴스 리스트 확인
-        #print("DEBUG: 크롤링된 뉴스 리스트:", news_list)
-        return news_list
-    
+        # news_content 생성 (리스트를 줄바꿈으로 연결)
+        news_content = "\n\n".join(news_list)
+        
+        # 디버깅: news_content 확인
+        print("DEBUG: 생성된 news_content:", news_content)
+        return news_content
+
     else:
         print("Error: 네이버 뉴스 API 호출 실패, 상태 코드:", response.status_code)
-        return []
+        return "뉴스 데이터를 불러올 수 없습니다."
+
 
 # 크롤링한 뉴스 데이터를 데이터베이스에 저장하는 함수
 def get_news(interview_init):
-    # 회사 이름을 통해 뉴스 크롤링
-    news_data = naver_news_crawler(interview_init.company_name)
-    
-    # JSON 형식의 문자열로 변환하여 news_group 컬럼에 저장
-    interview_init.news_group = news_data
+    # company_name을 기준으로 뉴스 본문을 직접 생성하여 저장
+    news_content = naver_news_crawler(interview_init.company_name)
+    interview_init.news_group = news_content
     interview_init.save()
 
+    #디버깅: news_group에 저장된 데이터 확인
+    print("DEBUG: news_group에 저장된 데이터:", interview_init.news_group)
 
-#def generate (위에 실행된 내용 기반으로 gpt한테 질문 만들어달라는 함수)
 def generate(api_key, pk):
     # 저장된 인터뷰 데이터 객체를 조회
     interview_init = get_object_or_404(InterviewGen, pk=pk)
 
-    # `news_group`이 JSON 형식인지 확인 후 파싱
-    try:
-        news_group = json.loads(interview_init.news_group) if interview_init.news_group else []
-    except json.JSONDecodeError:
-        news_group = []  # JSON 형식이 아니면 빈 리스트로 설정하여 오류 방지
-
-
-    # 뉴스 본문 정보를 생성
-    news_content = "\n".join([f"{item['title']}: {item['link']}\n{item['article']}" for item in news_group])
-    print(news_content)
+    # news_group을 파싱 없이 바로 사용
+    news_content = interview_init.news_group or "뉴스 내용이 없습니다."
 
     try:
         client = OpenAI(api_key=api_key)
