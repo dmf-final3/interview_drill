@@ -2,75 +2,67 @@
 <html lang="en">
 <head>
     {% load static %}
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}면접 질문 생성기{% endblock %}</title>
 
-    <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQDS27SAm4FURzt3gDR0Ju4EmXmI1j6OuxA9SxRziC59U9DI0T1ouEh7M" crossorigin="anonymous">
+    <!-- 최신 Bootstrap CSS (integrity 속성 제거) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- 커스텀 CSS -->
-    <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'interview_gen/css/style.css' %}">
 </head>
-<body class="bg-light d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
-    <!-- 네비게이션 바 -->
-    <!-- 콘텐츠 영역 -->
-    <main class="container my-5">
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <main class="container my-5 flex-grow-1">
         {% block body %}
         {% endblock %}
     </main>
 
-    <!-- 모달 HTML 코드 (base.html에 추가) -->
+    <!-- 모달 HTML 코드 -->
     <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-body">
-              <div class="d-flex align-items-center">
-                <strong>면접 질문을 생성하고 있어요... 잠시만 기다려주세요!</strong>
-                <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-              </div>
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="d-flex align-items-center">
+                        <strong>면접 질문을 생성하고 있어요... 잠시만 기다려주세요!</strong>
+                        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 
-    
-    <!-- jQuery (필요한 경우만) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap JS and Popper.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBogGzLDERmM/y4zVi1FH9H3K5xPeHA6I1mGpc0imt4P/58p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+CBu7j3oVbCfV2GmZ57NCQv8K6pE9" crossorigin="anonymous"></script>
+    <footer class="bg-light py-3 mt-auto">
+        <div class="container text-center">
+            <span class="text-muted">&copy; 2024 면접 질문 생성기. All rights reserved.</span>
+        </div>
+    </footer>
 
-    <script>
+    <!-- Bootstrap JS와 Popper.js CDN (integrity 속성 제거) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
 
-        function showLoadingModal() {
-        const modal = new bootstrap.Modal(document.getElementById('loadingModal'));
-        modal.show();
-        }
-
-        function hideLoadingModal() {
-            const modal = new bootstrap.Modal(document.getElementById('loadingModal'));
-            modal.hide();
+    <!-- 로딩 모달 스크립트 -->
+    <script defer>
+        function toggleLoadingModal(show) {
+            const modalElement = document.getElementById('loadingModal');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            if (show) {
+                modalInstance.show();
+            } else {
+                modalInstance.hide();
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('generateForm');
             if (form) {
                 form.addEventListener('submit', function(event) {
-                    showLoadingModal();  // 폼 제출 시 로딩 모달 표시
+                    toggleLoadingModal(true);  // 폼 제출 시 로딩 모달 표시
                 });
             }
         });
-    
     </script>
-    
-    <!-- Footer -->
-    <footer class="bg-light py-3">
-        <div class="container text-center">
-            <span class="text-muted">&copy; 2024 면접 질문 생성기. All rights reserved.</span>
-        </div>
-    </footer>
-
 </body>
 </html>

@@ -54,6 +54,7 @@ def create(request):
     }
     return render(request, 'form.html', context) # 다시 폼 보여주기
 
+
 def naver_news_crawler(company_name):
     headers = {
         "X-Naver-Client-Id": CLIENT_ID,
@@ -91,7 +92,7 @@ def naver_news_crawler(company_name):
                     article = "본문 없음"
                 
                 # 최종 뉴스 데이터 추가
-                news_item = f"{title}: {url}\n{article}"
+                news_item = f"{title}\n{url}\n{article}"
                 news_list.append(news_item)
             
             except Exception as e:
@@ -101,7 +102,7 @@ def naver_news_crawler(company_name):
         news_content = "\n\n".join(news_list)
         
         # 디버깅: news_content 확인
-        print("DEBUG: 생성된 news_content:", news_content)
+        #print("DEBUG: 생성된 news_content:", news_content)
         return news_content
 
     else:
@@ -117,7 +118,8 @@ def get_news(interview_init):
     interview_init.save()
 
     #디버깅: news_group에 저장된 데이터 확인
-    print("DEBUG: news_group에 저장된 데이터:", interview_init.news_group)
+    #print("DEBUG: news_group에 저장된 데이터:", interview_init.news_group)
+
 
 def generate(api_key, pk):
     # 저장된 인터뷰 데이터 객체를 조회
@@ -135,20 +137,23 @@ def generate(api_key, pk):
                     'role': 'system', 
                     'content': """
                                     너는 이제부터 면접관과 면접자의 롤플레이를 할거야.
-                                    면접관의 대화는 다음 조건에 맞게 생성해줘.
-                                    1.면접자의 비판적 사고 능력 등을 판단하는 동시에, 
-                                    2.experience의 구체적 예시나 일화에 대해 답변을 유도하는 면접 질문을 5개 생성해줘. 
-                                    3.예/ 아니오나 명백한 답변이 있는 질문은 피하고, 
-                                    4.뉴스 본문 정보에 대한 의견을 묻는 질문도 최대 2개까지 포함시켜줘.
-                                    5.반향어는 최대한 삼가고 실제 지원자에게 말을 거는 듯한 말투로 질문을 작성해줘.
-                                    6.뉴스 본문 정보를 참고할때는 주식 관련이나 부정적 내용은 최대한 배제하고 회사에 대한 긍정적인 기사를 중심으로 질문을 생성해줘.
-                                    면접자의 대화는 다음 조건에 맞게 생성해줘.
-                                    1.입력한 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성해줘.
-                                    2.뉴스와 관련된 질문은 뉴스 본문 정보에서 답을 찾아서 제시해줘.
-                                    3.마지막으로 이 기업에서 어떤 역할을 수행할 수 있을지 잘 드러나는 답변을 작성해줘.
-                                    최종 형태는 html로 표시했을때 다음과 같이 출력하고
-                                    <h2>면접 질문1</h2> <p>질문 내용1</p> <h2>면접 답변1</h2> <p>답변 내용1</p> <h2>면접 질문2</h2> <p>질문 내용2</p>
-                                    양끝에 html 코드 블럭은 제거해줘.
+
+                                    뉴스 본문 정보를 기반으로 한 최신 동향 질문 최소 3개,
+                                    면접자의 경험 정보의 구체적인 예시나 일화에 대해 답변을 유도하는 질문 최소 3개,
+                                    기타 창의적인 질문 최소 1개를 통해 최대 10개의 질문을 작성해줘.
+
+                                    뉴스 본문 정보를 참고할때는 회사에 대한 긍정적인 기사를 중심으로 질문을 생성하고,
+                                    뉴스 본문 정보가 없다면 뉴스 관련 질문은 생략해줘.
+
+                                    면접관은 면접자의 비판적 사고 능력을 판단하는 동시에,
+                                    예/아니오나 단답형으로 답변이 나오는 질문은 피하고,
+                                    면접자는 입력한 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성해줘.
+                                    추가로 답변을 뉴스 본문 정보에서 참고했을 때 참고한 뉴스 링크를 답변의 마지막줄에 같이 제시해줘.
+
+                                    최종 형태는 html로 표시했을때 아래 예시와 같이 출력해줘.
+                                    <p class="question"> 질문 내용1 </p> <p class="answer"> 답변 내용1</p> <p class="question"> 질문 내용2 </p> <p class="answer"> 답변 내용2 </p>
+                                    그리고 마지막으로 양끝에 html 코드 블럭은 제거해줘.
+                                    
                                 """
                 },
                 {'role': 'user',
