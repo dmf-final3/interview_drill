@@ -1,0 +1,34 @@
+/* 채팅 컨테이너 스타일 */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 질문 말풍선 스타일 */
+.question {
+    align-self: flex-start; /* 왼쪽 정렬 */
+    background-color: #e0f7fa;
+    padding: 10px 15px;
+    border-radius: 15px 15px 15px 3px;
+    display: inline-block;
+    max-width: 80%;         /* 컨테이너 너비의 70%로 제한 */
+    margin: 10px 0 10px 10px; /* 오른쪽에 공간 추가로 위치 차이 생성 */
+    font-weight: bold;
+}
+
+/* 답변 말풍선 스타일 */
+.answer {
+    align-self: flex-end; /* 오른쪽 정렬 */
+    background-color: #fff3e0;
+    padding: 10px 15px;
+    border-radius: 15px 15px 3px 15px;
+    display: inline-block;
+    max-width: 80%;        /* 컨테이너 너비의 70%로 제한 */
+    margin: 10px 10px 10px 0; /* 왼쪽에 공간 추가로 위치 차이 생성 */
+}

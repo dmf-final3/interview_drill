@@ -101,8 +101,6 @@ def naver_news_crawler(company_name):
         # news_content 생성 (리스트를 줄바꿈으로 연결)
         news_content = "\n\n".join(news_list)
         
-        # 디버깅: news_content 확인
-        #print("DEBUG: 생성된 news_content:", news_content)
         return news_content
 
     else:
@@ -116,9 +114,6 @@ def get_news(interview_init):
     news_content = naver_news_crawler(interview_init.company_name)
     interview_init.news_group = news_content
     interview_init.save()
-
-    #디버깅: news_group에 저장된 데이터 확인
-    #print("DEBUG: news_group에 저장된 데이터:", interview_init.news_group)
 
 
 def generate(api_key, pk):
@@ -136,23 +131,23 @@ def generate(api_key, pk):
                 {
                     'role': 'system', 
                     'content': """
-                                    너는 이제부터 면접관과 면접자의 롤플레이를 할거야.
+                                    너는 이제부터 한글로 면접관과 지원자의 롤플레이를 할거야.
 
-                                    뉴스 본문 정보를 기반으로 한 최신 동향 질문 최소 3개,
-                                    면접자의 경험 정보의 구체적인 예시나 일화에 대해 답변을 유도하는 질문 최소 3개,
-                                    기타 창의적인 질문 최소 1개를 통해 최대 10개의 질문을 작성해줘.
+                                    뉴스 본문 정보를 기반으로 한 최신 동향 질문 2개,
+                                    면접자의 경험 정보의 구체적인 예시나 일화에 대해 답변을 유도하는 질문 3개,
+                                    총 5개의 질문을 작성해줘.
 
                                     뉴스 본문 정보를 참고할때는 회사에 대한 긍정적인 기사를 중심으로 질문을 생성하고,
-                                    뉴스 본문 정보가 없다면 뉴스 관련 질문은 생략해줘.
+                                    추가로 뉴스를 참고하여 생성한 질문 답변의 경우 무조건 참고한 뉴스 링크를 <a href="">관련 뉴스 링크 바로가기</a>를 이용해서 참고한 질문 내용n의 p 태그 마지막에 첨부해줘.
+                                    뉴스 본문 정보가 없다면 뉴스 관련 질문을 생략하고 링크를 달아줄 필요도 없어.
 
                                     면접관은 면접자의 비판적 사고 능력을 판단하는 동시에,
                                     예/아니오나 단답형으로 답변이 나오는 질문은 피하고,
-                                    면접자는 입력한 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성해줘.
-                                    추가로 답변을 뉴스 본문 정보에서 참고했을 때 참고한 뉴스 링크를 답변의 마지막줄에 같이 제시해줘.
+                                    지원자는 입력한 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성해야돼.
 
                                     최종 형태는 html로 표시했을때 아래 예시와 같이 출력해줘.
                                     <p class="question"> 질문 내용1 </p> <p class="answer"> 답변 내용1</p> <p class="question"> 질문 내용2 </p> <p class="answer"> 답변 내용2 </p>
-                                    그리고 마지막으로 양끝에 html 코드 블럭은 제거해줘.
+                                    마지막으로 양끝에 html 코드 블럭은 제거해줘.
                                     
                                 """
                 },

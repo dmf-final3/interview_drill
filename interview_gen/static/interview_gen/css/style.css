@@ -33,24 +33,15 @@ h1, h2 {
     background-color: #0056b3;
 }
 
-/* 질문 리스트 스타일 */
+/* 질문 리스트 스타일
 .list-group-item {
     font-size: 1em;
     padding: 15px;
     border: 1px solid #ddd;
-}
+} */
 
-/* footer 스타일 */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #f8f9fa;
-    text-align: center;
-    padding: 10px;
-    font-size: 0.9em;
-}
-
-footer span {
-    color: #6c757d;
+/* 전체 리스트 스타일 */
+.list-group-item {
+    border: none;
+    margin: 10px 0;
 }

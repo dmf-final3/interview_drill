@@ -11,12 +11,18 @@
 
     <!-- 커스텀 CSS -->
     <link rel="stylesheet" href="{% static 'interview_gen/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'interview_gen/css/chat.css' %}">
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
 
     <main class="container my-5 flex-grow-1">
-        {% block body %}
-        {% endblock %}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+
     </main>
 
     <!-- 모달 HTML 코드 -->
@@ -32,12 +38,6 @@
             </div>
         </div>
     </div>
-
-    <footer class="bg-light py-3 mt-auto">
-        <div class="container text-center">
-            <span class="text-muted">&copy; 2024 면접 질문 생성기. All rights reserved.</span>
-        </div>
-    </footer>
 
     <!-- Bootstrap JS와 Popper.js CDN (integrity 속성 제거) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" defer></script>
