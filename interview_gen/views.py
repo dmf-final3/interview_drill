@@ -60,19 +60,37 @@ def naver_news_crawler(company_name):
         "X-Naver-Client-Id": CLIENT_ID,
         "X-Naver-Client-Secret": CLIENT_SECRET
     }
-    params = {
-        "query": company_name,  # 검색어 설정
-        "display": 5,          # 출력 결과 개수 설정 (최대 10개)
-        "start": 1,
-        "sort": "sim"           # 정렬 방식: 유사도 순
-    }
-    response = requests.get(NEWS_SEARCH_URL, headers=headers, params=params)
-    
-    if response.status_code == 200:
-        news_items = response.json().get('items', [])
-        news_list = []
+    news_list = []
+    start = 1
+
+    while len(news_list) < 5:
+        params = {
+            "query": company_name,  # 검색어 설정
+            "display": 10,          # 출력 결과 개수 설정 (최대 10개)
+            "start": start,
+            "sort": "sim",           # 정렬 방식: 관련도
+            "sm" : "tab_opt",
+            "pd" : 5,
+            "mynews" : 1,
+            "office_type" : 3,
+        }
+
+        response = requests.get(NEWS_SEARCH_URL, headers=headers, params=params)
         
+        if response.status_code != 200:
+            print("Error: 네이버 뉴스 API 호출 실패, 상태 코드:", response.status_code)
+            return None  # 에러 발생 시 None 반환
+
+        #API 응답에서 기사 목록 추출
+        news_items = response.json().get('items', [])
+        
+        if not news_items: #더 이상 기사가 없을 경우 반복 종료
+            break
+            
         for item in news_items:
+            if len(news_list) >= 5:
+                break
+
             # 각 뉴스 링크를 통해 기사 제목과 본문을 크롤링
             url = item["link"]
             try:
@@ -80,7 +98,8 @@ def naver_news_crawler(company_name):
                 article_soup = BeautifulSoup(article_response.text, "html.parser")
                 
                 # 제목 추출
-                title = article_soup.select_one("h2#title_area").get_text() if article_soup.select_one("h2#title_area") else "제목 없음"
+                title_tag = article_soup.select_one("h2#title_area")
+                title = title_tag.get_text() if title_tag and hasattr(title_tag, 'get_text') else None  # get_text() 호출 전 확인
                 
                 # 본문 추출 (이미지 태그는 제거)
                 article_tag = article_soup.select_one("article#dic_area")
@@ -89,23 +108,20 @@ def naver_news_crawler(company_name):
                         span.decompose()  # 이미지 태그 제거
                     article = article_tag.get_text(strip=True)
                 else:
-                    article = "본문 없음"
+                    article = None
                 
-                # 최종 뉴스 데이터 추가
-                news_item = f"{title}\n{url}\n{article}"
-                news_list.append(news_item)
+                # 제목과 본문이 있고 본문 길이가 100자 이상일 경우만 최종 뉴스 데이터 추가
+                if title and article and len(article) >= 100:
+                    news_item = f"{title}\n{url}\n{article}"
+                    news_list.append(news_item)
             
             except Exception as e:
-                print("Error fetching article content from URL:", url, "Error:", e)
+                    print("Error fetching article content from URL:", url, "Error:", e)
         
-        # news_content 생성 (리스트를 줄바꿈으로 연결)
-        news_content = "\n\n".join(news_list)
-        
-        return news_content
+        start += 10  # 다음 API 호출 시 새로운 기사 목록을 가져오기 위해 시작 인덱스 증가
 
-    else:
-        print("Error: 네이버 뉴스 API 호출 실패, 상태 코드:", response.status_code)
-        return "뉴스 데이터를 불러올 수 없습니다."
+    # 수집된 5개의 유효한 뉴스 기사를 반환
+    return "\n\n".join(news_list) if news_list else None
 
 
 # 크롤링한 뉴스 데이터를 데이터베이스에 저장하는 함수
@@ -131,33 +147,39 @@ def generate(api_key, pk):
                 {
                     'role': 'system', 
                     'content': """
-                                    너는 이제부터 한글로 면접관과 지원자의 롤플레이를 할거야.
+                                    너는 이제부터 한글로 면접관과 지원자의 롤플레이를 할 거야.
 
-                                    뉴스 본문 정보를 기반으로 한 최신 동향 질문 2개,
-                                    면접자의 경험 정보의 구체적인 예시나 일화에 대해 답변을 유도하는 질문 3개,
-                                    총 5개의 질문을 작성해줘.
+                                    아래 조건에 맞춰 총 5개의 질문을 작성해줘.
+                                    
+                                    - **첫 번째 섹션**: 면접관은 최신 동향 관련 질문 2개를 먼저 작성해줘.
+                                    * 이 질문들은 뉴스 본문 정보를 참고하여 작성하고, 뉴스 관련된 답변에만 뉴스 링크를 추가해야 해.
+                                    * 지원자는 해당 답변 시 경험 정보를 복합적으로 활용한 답변을 제시해도 좋아.
+                                    * 지원자의 답변 바로 뒤에 뉴스 링크를 넣어야 하며, 형식은 <a href="링크" target="_blank">관련 뉴스 링크 바로가기</a>와 같아야 해.
+                                    
+                                    - **두 번째 섹션**: 지원자의 경험 정보와 관련된 질문 3개를 작성해줘.
+                                    * 면접관은 이 질문을 통해 지원자의 경험 정보에서 구체적인 예시나 일화를 유도해야해.
+                                    * 지원자는 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성하되 experience에 정보가 부족할 경우 키워드를 조합해서 알맞는 경험을 적당히 창작해도 좋아.
+                                    * 이 섹션의 질문에는 뉴스 링크를 추가하지 말아줘.
 
-                                    뉴스 본문 정보를 참고할때는 회사에 대한 긍정적인 기사를 중심으로 질문을 생성하고,
-                                    추가로 뉴스를 참고하여 생성한 질문 답변의 경우 무조건 참고한 뉴스 링크를 <a href="">관련 뉴스 링크 바로가기</a>를 이용해서 참고한 질문 내용n의 p 태그 마지막에 첨부해줘.
-                                    뉴스 본문 정보가 없다면 뉴스 관련 질문을 생략하고 링크를 달아줄 필요도 없어.
+                                    최종 출력은 HTML 형태로, 아래 예시처럼 작성해줘:
+                                    <p class="question">질문 내용 1</p><p class="answer">답변 내용 1 <br></br><a href="링크" target="_blank">관련 뉴스 링크 바로가기</a></p>
+                                    <p class="question">질문 내용 2</p><p class="answer">답변 내용 2 <br></br><a href="링크" target="_blank">관련 뉴스 링크 바로가기</a></p>
+                                    <p class="question">질문 내용 3</p><p class="answer">답변 내용 3</p>
+                                    <p class="question">질문 내용 4</p><p class="answer">답변 내용 4</p>
+                                    <p class="question">질문 내용 5</p><p class="answer">답변 내용 5</p>
 
-                                    면접관은 면접자의 비판적 사고 능력을 판단하는 동시에,
-                                    예/아니오나 단답형으로 답변이 나오는 질문은 피하고,
-                                    지원자는 입력한 experience의 구체적 예시나 일화를 두괄식으로 잘 드러내는 답변을 작성해야돼.
-
-                                    최종 형태는 html로 표시했을때 아래 예시와 같이 출력해줘.
-                                    <p class="question"> 질문 내용1 </p> <p class="answer"> 답변 내용1</p> <p class="question"> 질문 내용2 </p> <p class="answer"> 답변 내용2 </p>
-                                    마지막으로 양끝에 html 코드 블럭은 제거해줘.
+                                    ```html``` 코드를 생략한 후 위와 같은 형식으로 출력해줘. 뉴스 관련 질문 뒤에만 링크를 포함해야 하며, 나머지 질문에는 링크를 달지 말아야 해.
                                     
                                 """
                 },
                 {'role': 'user',
                 'content': f"""
-                                                면접자의 경험 정보 : {interview_init.experience},
+                                                지원자의 경험 정보 : {interview_init.experience},
                                                 뉴스 본문 정보: {news_content}
                                             """
                 }    
-            ]
+            ],
+            temperature=0.5
         )
 
         questions = completion.choices[0].message.content
