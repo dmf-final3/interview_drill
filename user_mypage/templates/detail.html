@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>{{ interview.company_name }} 면접 질문 생성 내역</h2>
+    <p><strong>자기소개서:</strong> {{ interview.experience }}</p>
+    <p><strong>생성된 인터뷰:</strong></p>
+    <div class="interview-content">{{ interview.generated_question|safe }}</div>
+</div>
+{% endblock %}

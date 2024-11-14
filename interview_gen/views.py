@@ -32,23 +32,30 @@ def index(request):
 
 def create(request):
     if request.method == 'POST':
-        form = InterviewGenForm(request.POST)
+        form = InterviewGenForm(request.POST)  # 파일 처리가 필요한 경우에만 request.FILES 포함
         if form.is_valid():
-            # 폼 데이터를 저장하고 `company_name`을 기준으로 뉴스 데이터를 저장
-            interview_init = form.save()
-            get_news(interview_init)
+            interview_gen = form.save(commit=False)
+            if request.user.is_authenticated:
+                interview_gen.user = request.user
+            interview_gen.save()
 
-            # 이후 다른 API와의 통합을 위해 OpenAI generate 함수를 호출합니다
-            generate(openai_api_key, interview_init.id)
+            # 뉴스 데이터 생성 및 저장
+            get_news(interview_gen)
 
-            return redirect('interview_gen:question_gen', pk=interview_init.pk)  # 저장 후 리디렉션 (예: 로딩페이지or)
+            # OpenAI를 사용하여 질문 생성
+            try:
+                # 환경 변수에서 OpenAI API 키 로드
+                api_key = os.getenv('OPENAI_API_KEY')
+                generate(api_key, interview_gen.id)
+            except Exception as e:
+                return HttpResponse("Error generating questions: " + str(e))
+
+            # 생성된 질문 페이지로 리다이렉트
+            return redirect('interview_gen:question_gen', pk=interview_gen.pk)
     else:
-        form = InterviewGenForm()  # GET 요청일 때 빈 폼 표시
-    
-    context = {
-        'form': form,
-    }
-    return render(request, 'form.html', context) # 다시 폼 보여주기
+        form = InterviewGenForm()
+
+    return render(request, 'interview_gen/create.html', {'form': form})
 
 
 def naver_news_crawler(company_name):
@@ -141,7 +148,7 @@ def generate(api_key, pk):
                                     
                                     - **첫 번째 섹션**: 면접관은 최신 동향 관련 질문 2개를 먼저 작성해줘.
                                     * 이 질문들은 뉴스 본문 정보를 참고하여 작성하고, 뉴스 관련된 답변에만 뉴스 링크를 추가해야 해.
-                                    * 뉴스 링크에는 중복이 없었으면 좋겠고 면접 질문, 답변 그리고 뉴스의 내용은 서로 연관이 있어야 돼.
+                                    * 참조하는 뉴스 링크는 서로 중복되지 않아야 하고 면접 질문, 답변 그리고 뉴스의 내용은 서로 연관이 있어야 돼.
                                     * 지원자는 해당 답변 시 경험 정보를 복합적으로 활용한 답변을 제시해도 좋아.
                                     * 지원자의 답변 바로 뒤에 뉴스 링크를 넣어야 하며, 형식은 <a href="링크" target="_blank">관련 뉴스 링크 바로가기</a>와 같아야 해.
                                     

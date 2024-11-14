@@ -5,64 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}면접 질문 생성기{% endblock %}</title>
-
-    <!-- 최신 Bootstrap CSS (integrity 속성 제거) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- 커스텀 CSS -->
     <link rel="stylesheet" href="{% static 'interview_gen/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'interview_gen/css/chat.css' %}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
-
-    <main class="container my-5 flex-grow-1">
+    <!-- Navbar 시작 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">  <!-- container-fluid 유지 -->
+            <a class="navbar-brand" href="{% url 'interview_gen:index' %}">면접 질문 생성기</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="navbar-text"><strong>{{ user.username }}님, 환영합니다!</strong></span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_mypage:logout' %}">Logout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_mypage:mypage' %}">MyPage</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_mypage:signup' %}">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_mypage:login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar 종료 -->
+    <main class="container my-5 flex-grow-1">  <!-- 고정된 container 사용 -->
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8">
-                {% block body %}
-                {% endblock %}
+            <div class="col-12">  <!-- 모든 칼럼을 사용 -->
+                {% block body %}{% endblock %}
             </div>
         </div>
-
     </main>
-
-    <!-- 모달 HTML 코드 -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="d-flex align-items-center">
-                        <strong>면접 질문을 생성하고 있어요... 잠시만 기다려주세요!</strong>
-                        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS와 Popper.js CDN (integrity 속성 제거) -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
-
-    <!-- 로딩 모달 스크립트 -->
-    <script defer>
-        function toggleLoadingModal(show) {
-            const modalElement = document.getElementById('loadingModal');
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-            if (show) {
-                modalInstance.show();
-            } else {
-                modalInstance.hide();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('generateForm');
-            if (form) {
-                form.addEventListener('submit', function(event) {
-                    toggleLoadingModal(true);  // 폼 제출 시 로딩 모달 표시
-                });
-            }
-        });
-    </script>
+    ...
 </body>
 </html>

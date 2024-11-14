@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}MyPage{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>프로필 정보</h2>
+    <p><strong>전공:</strong> {{ major }}</p>
+    <p><strong>희망직무:</strong> {{ desired_job }}</p>
+
+    <h2>질문 생성 내역</h2>
+    {% if interviews %}
+        <ul>
+            {% for interview in interviews %}
+            <li>
+                <a href="{% url 'user_mypage:detail' interview.id %}">{{ interview.company_name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No interview questions generated yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

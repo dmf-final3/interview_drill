@@ -1,7 +1,11 @@
-/* container */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* container 클래스에 대한 기본 스타일 재정의 */
 .container {
-    max-width: 700px;
-    margin-top: 20px;
+    max-width: 1200px;  /* 필요에 따라 조정 */
+    width: 100%;  /* 100% 너비를 사용하도록 설정 */
 }
 
 /* header 스타일 */
@@ -40,8 +44,63 @@ h1, h2 {
     border: 1px solid #ddd;
 } */
 
-/* 전체 리스트 스타일 */
+/* 전체 리스트 스타일
 .list-group-item {
     border: none;
     margin: 10px 0;
+} */
+
+
+/* Navbar 스타일 */
+
+/* 환영 메시지 특별 스타일 적용 */
+.navbar {
+    background-color: #007bff !important; /* 포인트 컬러로 배경 설정, 우선 순위 강제 적용 */
+    color: #fff !important; /* 텍스트 색상을 흰색으로 설정, 우선 순위 강제 적용 */
+}
+
+.navbar .navbar-brand, .navbar-nav .nav-link {
+    color: #fff !important; /* 모든 네비게이션 텍스트 색상 강제 설정, 우선 순위 강제 적용 */
+}
+
+.navbar .nav-item {
+    display: flex;
+    align-items: center; /* 항목들을 수직 중앙 정렬 */
+    height: 100%; /* 네비게이션 바의 전체 높이 사용 */
+}
+
+.navbar .nav-link {
+    padding: 0.5rem 1rem; /* 네비게이션 링크 패딩 조정 */
+}
+
+.navbar .navbar-text {
+    padding-left: 0.5rem; /* 사용자 환영 메시지와 로그아웃 링크 사이의 간격 조정 */
+    font-weight: bold; /* 텍스트 굵기 강조 */
+}
+
+/* 글꼴 변경 */
+body, .navbar {
+    font-family: 'Arial', sans-serif; /* 전체와 네비게이션 바에 적용될 기본 글꼴 */
+}
+
+/* 네비게이션 바 링크에 호버 효과 추가 */
+.navbar .nav-link:hover {
+    background-color: #0056b3; /* 호버 시 배경 색상 변경 */
+    transition: background-color 0.3s ease; /* 부드러운 색상 전환 효과 */
+}
+
+.interview-content p {
+    margin-bottom: 10px;  /* 각 문단 간 간격 조정 */
+}
+
+.question {
+    background-color: #e0f7fa; /* 질문 배경색 */
+    padding: 10px; /* 패딩 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+.answer {
+    background-color: #fff3e0; /* 답변 배경색 */
+    padding: 10px; /* 패딩 */
+    border-radius: 5px; /* 모서리 둥글게 */
 }
