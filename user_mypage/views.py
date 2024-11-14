@@ -5,7 +5,11 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from interview_gen.models import InterviewGen
 from .models import Mypage
+from django.contrib.auth.views import LoginView
 
+class CustomLoginView(LoginView):
+    form_class = CustomAuthenticationForm  # 한글 레이블이 적용된 폼 사용
+    template_name = 'user_mypage/login.html'
 
 # Create your views here.
 def signup(request):

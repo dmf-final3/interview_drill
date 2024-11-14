@@ -4,22 +4,27 @@
 {% block title %}MyPage{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h2>프로필 정보</h2>
-    <p><strong>전공:</strong> {{ major }}</p>
-    <p><strong>희망직무:</strong> {{ desired_job }}</p>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="text-center mt-4">
+        <h2 class="mb-5">{{ request.user.username }}의 프로필 정보</h2>
+        <p><strong>전공:</strong> {{ major }}</p>
+        <p><strong>희망직무:</strong> {{ desired_job }}</p>
 
-    <h2>질문 생성 내역</h2>
-    {% if interviews %}
-        <ul>
-            {% for interview in interviews %}
-            <li>
-                <a href="{% url 'user_mypage:detail' interview.id %}">{{ interview.company_name }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No interview questions generated yet.</p>
-    {% endif %}
+        <!-- 구분선 추가 -->
+        <hr class="w-90" style="margin-top: 7rem; margin-bottom: 7rem;"> <!-- 구분선에 상하 여백과 너비 설정 -->
+
+        <h2 class="mb-5">질문 생성 내역</h2>
+        {% if interviews %}
+            <ul class="mt-4 custom-list">
+                {% for interview in interviews %}
+                <li>
+                    <a href="{% url 'user_mypage:detail' interview.id %}">{{ interview.company_name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mt-4">No interview questions generated yet.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

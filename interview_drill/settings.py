@@ -57,7 +57,7 @@ ROOT_URLCONF = 'interview_drill.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'], # user_mypage/templates를 전역 경로로 추가],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,3 +126,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user_mypage.Mypage'
+
+LOGIN_REDIRECT_URL = '/interview_gen'  # 로그인 후 리디렉션할 URL 설정
