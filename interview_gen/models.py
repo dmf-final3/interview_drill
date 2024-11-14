@@ -7,4 +7,4 @@ class InterviewGen(models.Model):
     experience = models.TextField() #관련경험(자소서)
     news_group = models.TextField(blank=True) #뉴스모음
     generated_question = models.TextField(blank=True) #생성된 질문
-    user = models.ForeignKey(Mypage, on_delete=models.CASCADE, related_name='interviews', null=True)
+    user = models.ForeignKey(Mypage, on_delete=models.CASCADE, related_name='interviews', null=True, blank=True)
