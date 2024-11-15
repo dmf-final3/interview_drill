@@ -27,17 +27,17 @@
                             <span class="navbar-text"><strong>{{ user.username }}님, 환영합니다!</strong></span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_mypage:logout' %}">Logout</a>
+                            <a class="nav-link" href="{% url 'user_mypage:logout' %}">로그아웃</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_mypage:mypage' %}">MyPage</a>
+                            <a class="nav-link" href="{% url 'user_mypage:mypage' %}">마이페이지</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_mypage:signup' %}">Sign Up</a>
+                            <a class="nav-link" href="{% url 'user_mypage:signup' %}">회원가입</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_mypage:login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'user_mypage:login' %}">로그인</a>
                         </li>
                     {% endif %}
                 </ul>
