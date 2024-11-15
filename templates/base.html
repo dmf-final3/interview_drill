@@ -4,7 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}면접 질문 생성기{% endblock %}</title>
+    <title>{% block title %}✨면접GINI{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'interview_gen/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'interview_gen/css/chat.css' %}">
@@ -16,7 +16,7 @@
     <!-- Navbar 시작 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">  <!-- container-fluid 유지 -->
-            <a class="navbar-brand" href="{% url 'interview_gen:index' %}">면접 질문 생성기</a>
+            <a class="navbar-brand" href="{% url 'interview_gen:index' %}">면접GINI</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -60,7 +60,7 @@
                 <div class="modal-body">
                     <div class="d-flex align-items-center">
                         <strong>면접 질문을 생성하고 있어요... 잠시만 기다려주세요!</strong>
-                        <div class="hourglass-loader"></div>
+                        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
                     </div>
                 </div>
             </div>
