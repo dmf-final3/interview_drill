@@ -130,6 +130,13 @@ def get_news(interview_init):
 def generate(api_key, pk):
     # 저장된 인터뷰 데이터 객체를 조회
     interview_init = get_object_or_404(InterviewGen, pk=pk)
+    user_info = interview_init.user
+
+    # 사용자 정보를 확인하고 조건에 맞는 프롬프트 구성
+    if user_info and user_info.major and user_info.desired_job:
+        prompt_context = f"지원자의 전공은 {user_info.major}이며, 지망 직무는 {user_info.desired_job}입니다."
+    else:
+        prompt_context = "지원자의 전공과 지망 직무에 대한 정보가 제공되지 않았습니다. 뉴스 정보와 자소서 기반으로 질문을 생성합니다."
 
     # news_group을 파싱 없이 바로 사용
     news_content = interview_init.news_group or "뉴스 내용이 없습니다."
@@ -141,9 +148,9 @@ def generate(api_key, pk):
             messages=[
                 {
                     'role': 'system', 
-                    'content': """
+                    'content': f"""
                                     너는 이제부터 한글로 면접관과 지원자의 롤플레이를 할 거야.
-
+                                    {prompt_context}
                                     아래 조건에 맞춰 총 5개의 질문을 작성해줘.
 
                                     - **전체 섹션** : 자기소개서의 회사와 본문의 form에 입력한 지망회사가 다를 때 form의 지망회사에 맞춰 질문과 답변을 제작해줘.
@@ -165,23 +172,20 @@ def generate(api_key, pk):
                                     <p class="question">질문 내용 3</p><p class="answer">답변 내용 3</p>
                                     <p class="question">질문 내용 4</p><p class="answer">답변 내용 4</p>
                                     <p class="question">질문 내용 5</p><p class="answer">답변 내용 5</p>
-                                    ```html```코드를 생략한 후 위와 같은 형식으로 출력해줘. 뉴스 관련 질문 뒤에만 링크를 포함해야 하며, 나머지 질문에는 링크를 달지 말아야 해.
-                                    
+                                    ```html```코드는 제외한 후 위와 같은 형식으로 출력해줘. 뉴스 관련 질문 뒤에만 링크를 포함해야 하며, 나머지 질문에는 링크를 달지 말아야 해.
                                 """
                 },
                 {'role': 'user',
                 'content': f"""
-                                                지원자의 경험 정보 : {interview_init.experience},
+                                                지원자의 경험 정보 : {interview_init.experience or '특정 경험이 없습니다'},
                                                 뉴스 본문 정보: {news_content}
-                                            """
+                            """
                 }    
             ],
-            temperature=0.5
+            temperature=0.4
         )
 
         questions = completion.choices[0].message.content
-
-
         # 생성된 질문을 인터뷰 객체에 저장하고 데이터베이스에 업데이트
         interview_init.generated_question = questions
         interview_init.save()
