@@ -1,22 +1,37 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div class="container mt-4">
-    <h2>{{ interview.company_name }} 면접 질문 생성 내역</h2>
+<div class="container mt-5">
+    <h2 class="mb-4">{{ interview.company_name }} 면접 질문 생성 내역</h2>
     
-    <!-- 자기소개서 토글 버튼 -->
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#experienceContent" aria-expanded="false" aria-controls="experienceContent">
-        자기소개서 보기/숨기기
-    </button>
+    <div class="row g-4">
+        <!-- 첫 번째 열: 자기소개서 -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#experienceContent" aria-expanded="false" aria-controls="experienceContent">
+                        자기소개서 보기/숨기기
+                    </button>
+                </div>
+                <div class="collapse" id="experienceContent">
+                    <div class="card-body">
+                        {{ interview.experience | linebreaksbr }}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- 토글되는 자기소개서 내용 -->
-    <div class="collapse" id="experienceContent">
-        <div class="card card-body">
-            {{ interview.experience | linebreaksbr }}
+        <!-- 두 번째 열: 생성된 인터뷰 -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <strong>생성된 인터뷰:</strong>
+                </div>
+                <div class="card-body">
+                    <div>{{ interview.generated_question | safe }}</div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <p><strong>생성된 인터뷰</strong></p>
-    <div class="text-center">{{ interview.generated_question | safe }}</div>
 </div>
 {% endblock %}
