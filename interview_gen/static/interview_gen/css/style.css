@@ -15,6 +15,11 @@ h1, h2 {
     text-align: center;
 }
 
+/* 로우에 마진 추가 */
+.row {
+    margin-top: 24px; /* 상단에 마진 추가 */
+}
+
 /* 모달의 텍스트 및 로딩 아이콘 */
 .modal-body {
     font-size: 1.1em;
@@ -95,62 +100,16 @@ body, .navbar {
 
 .question {
     background-color: #e0f7fa; /* 질문 배경색 */
+    text-align: left;
     padding: 10px; /* 패딩 */
     border-radius: 5px; /* 모서리 둥글게 */
 }
 
 .answer {
     background-color: #fff3e0; /* 답변 배경색 */
+    text-align: right;
     padding: 10px; /* 패딩 */
     border-radius: 5px; /* 모서리 둥글게 */
-}
-
-/* 모래시계 애니메이션 스타일 */
-.hourglass-loader {
-    position: relative;
-    width: 2rem;
-    height: 3rem;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: rotate(45deg); /* 모래시계 형태로 회전 */
-    margin-top: 1rem;
-}
-
-/* 위쪽 삼각형 */
-.hourglass-loader::before,
-.hourglass-loader::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border: 1rem solid transparent;
-    border-bottom-color: #3498db; /* 위쪽 색상 */
-    animation: hourglass 2s infinite ease-in-out;
-}
-
-/* 아래쪽 삼각형 */
-.hourglass-loader::after {
-    top: auto;
-    bottom: 0;
-    border-top-color: #3498db; /* 아래쪽 색상 */
-    border-bottom-color: transparent;
-    animation-delay: 1s;
-}
-
-/* 모래가 흘러가는 애니메이션 */
-@keyframes hourglass {
-    0%, 100% {
-        border-width: 1rem;
-        border-top-color: transparent;
-        border-bottom-color: #3498db;
-    }
-    50% {
-        border-width: 0.5rem;
-        border-top-color: #3498db;
-        border-bottom-color: transparent;
-    }
 }
 
 .custom-list li {
@@ -158,4 +117,16 @@ body, .navbar {
     padding-left: 0;       /* 항목의 들여쓰기 제거 */
     margin-left: -1rem;     /* 불릿과 텍스트 간격 조정 */
     list-style-position: inside;
+}
+
+/* 카드 헤더 스타일 조정 */
+.card-header {
+    background-color: #f8f9fa; /* 헤더 배경색 */
+    border-bottom: 1px solid #e9ecef; /* 헤더 하단 테두리 */
+    font-weight: bold; /* 볼드 스타일 적용 */
+    padding: 0.75rem 1.25rem; /* 패딩 조정 */
+}
+
+.card-body {
+    padding: 20px; /* 카드 본문의 패딩 */
 }

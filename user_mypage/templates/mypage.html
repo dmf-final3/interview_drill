@@ -4,27 +4,48 @@
 {% block title %}MyPage{% endblock %}
 
 {% block body %}
-<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="text-center mt-4">
-        <h2 class="mb-5">{{ request.user.username }}의 프로필 정보</h2>
-        <p><strong>전공:</strong> {{ major }}</p>
-        <p><strong>희망직무:</strong> {{ desired_job }}</p>
+<div class="container d-flex justify-content-center align-items-start" style="min-height: 100vh;">
+    <!-- 수평 정렬을 위한 Flexbox 컨테이너로 변경 -->
+    <div class="d-flex w-100 justify-content-between">
+        <!-- 프로필 정보 -->
+        <div class="text-center me-6" style="margin-right: 3rem;">
+            <h2 class="mb-5">{{ request.user.username }}의 프로필 정보</h2>
+            
+            <!-- 전공 필드 -->
+            <div class="mb-3">
+                <label class="form-label"><strong>전공:</strong></label>
+                <div class="form-control" readonly>{{ major }}</div>
+            </div>
+            
+            <!-- 희망직무 필드 -->
+            <div class="mb-3">
+                <label class="form-label"><strong>희망직무:</strong></label>
+                <div class="form-control" readonly>{{ desired_job }}</div>
+            </div>
+        </div>
 
-        <!-- 구분선 추가 -->
-        <hr class="w-90" style="margin-top: 7rem; margin-bottom: 7rem;"> <!-- 구분선에 상하 여백과 너비 설정 -->
+        <!-- 수직 구분선 -->
+        <div style="border-left: 1px solid #007bff; height: auto;"></div>
 
-        <h2 class="mb-5">질문 생성 내역</h2>
-        {% if interviews %}
-            <ul class="mt-4 custom-list">
-                {% for interview in interviews %}
-                <li>
-                    <a href="{% url 'user_mypage:detail' interview.id %}">{{ interview.company_name }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="mt-4">No interview questions generated yet.</p>
-        {% endif %}
+        <!-- 질문 생성 내역 -->
+        <div class="text-center ms-6" style="margin-left: 3rem;">
+            <h2 class="mb-5">질문 생성 내역</h2>
+            {% if interviews %}
+                <ul class="mt-4 custom-list">
+                    {% for interview in interviews %}
+                        <li class="mb-3">
+                            <label class="form-label"><strong>회사 이름:</strong></label>
+                            <!-- 입력란 스타일로 하이퍼링크를 감싼 형태 -->
+                            <a href="{% url 'user_mypage:detail' interview.id %}" class="form-control text-primary" style="display: inline-block; text-decoration: none;" readonly>
+                                {{ interview.company_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="mt-4"> 질문 생성 내역이 없습니다. </p>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

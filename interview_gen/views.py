@@ -182,7 +182,6 @@ def generate(api_key, pk):
                             """
                 }    
             ],
-            temperature=0.4
         )
 
         questions = completion.choices[0].message.content
