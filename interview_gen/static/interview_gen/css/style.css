@@ -2,15 +2,28 @@ body {
     font-family: 'Noto Sans KR', sans-serif;
 }
 
-/* container 클래스에 대한 기본 스타일 재정의 */
-.container {
-    max-width: 1200px;  /* 필요에 따라 조정 */
-    width: 100%;  /* 100% 너비를 사용하도록 설정 */
+/* 기본 컨테이너 스타일 */
+.full-height-container {
+    width: 100%; /* 전체 너비 사용 */
+    min-height: 100vh; /* 전체 높이 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.custom-container {
+    padding: 20px;
+    width: 100%; /* 최대 1200px */
+    max-width: 1200px; /* 컨테이너 최대 너비 */
+    background: #fff; /* 배경색 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
 
 /* header 스타일 */
 h1, h2 {
-    color: #007bff;
+    color: #333;
     font-weight: bold;
     text-align: center;
 }
@@ -25,21 +38,20 @@ h1, h2 {
     font-size: 1.1em;
 }
 
-/* 제출 버튼 스타일 */
 #generateForm input[type="submit"] {
-    background-color: #007bff;
-    color: white;
-    border: none;
+    font-size: 1.2em;
     padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
+    background-color: #7a7575;  /* 버튼 배경 색상 */
+    color: white;  /* 버튼 텍스트 색상 */
+    border: none;  /* 테두리 제거 */
+    border-radius: 5px;  /* 버튼 모서리 둥글게 */
+    text-decoration: none;  /* 링크 밑줄 제거 */
     width: 100%;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
 }
 
 #generateForm input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #333;
+    color: white;
 }
 
 /* 질문 리스트 스타일
@@ -55,45 +67,6 @@ h1, h2 {
     margin: 10px 0;
 } */
 
-
-/* Navbar 스타일 */
-
-/* 환영 메시지 특별 스타일 적용 */
-.navbar {
-    background-color: #007bff !important; /* 포인트 컬러로 배경 설정, 우선 순위 강제 적용 */
-    color: #fff !important; /* 텍스트 색상을 흰색으로 설정, 우선 순위 강제 적용 */
-}
-
-.navbar .navbar-brand, .navbar-nav .nav-link {
-    color: #fff !important; /* 모든 네비게이션 텍스트 색상 강제 설정, 우선 순위 강제 적용 */
-}
-
-.navbar .nav-item {
-    display: flex;
-    align-items: center; /* 항목들을 수직 중앙 정렬 */
-    height: 100%; /* 네비게이션 바의 전체 높이 사용 */
-}
-
-.navbar .nav-link {
-    padding: 0.5rem 1rem; /* 네비게이션 링크 패딩 조정 */
-}
-
-.navbar .navbar-text {
-    padding-left: 0.5rem; /* 사용자 환영 메시지와 로그아웃 링크 사이의 간격 조정 */
-    font-weight: bold; /* 텍스트 굵기 강조 */
-}
-
-/* 글꼴 변경 */
-body, .navbar {
-    font-family: 'Arial', sans-serif; /* 전체와 네비게이션 바에 적용될 기본 글꼴 */
-}
-
-/* 네비게이션 바 링크에 호버 효과 추가 */
-.navbar .nav-link:hover {
-    background-color: #0056b3; /* 호버 시 배경 색상 변경 */
-    transition: background-color 0.3s ease; /* 부드러운 색상 전환 효과 */
-}
-
 .interview-content p {
     margin-bottom: 10px;  /* 각 문단 간 간격 조정 */
 }
@@ -107,7 +80,7 @@ body, .navbar {
 
 .answer {
     background-color: #fff3e0; /* 답변 배경색 */
-    text-align: right;
+    text-align: left;
     padding: 10px; /* 패딩 */
     border-radius: 5px; /* 모서리 둥글게 */
 }
@@ -129,4 +102,98 @@ body, .navbar {
 
 .card-body {
     padding: 20px; /* 카드 본문의 패딩 */
+}
+
+/* Navbar Custom Styling */
+.navbar-custom {
+    background-color: transparent !important; /* 배경색 없음 */
+    border-bottom: 2px solid #333; /* 바닥에 굵은 선 추가 */
+    padding: 1.2rem 0; /* 상하 패딩 약간 줄임 */
+}
+
+.navbar-brand {
+    font-family: 'Black Han Sans', sans-serif; /* 서비스명에만 특별한 폰트 적용 */
+    color: #333; /* 글씨색 */
+    font-size: 2.5rem; /* 서비스명 폰트 크기 약간 줄임 */
+}
+
+.nav-link, .navbar-text {
+    color: #333; /* 네비게이션 링크 및 텍스트 색상 */
+    font-family: 'Noto Sans KR', sans-serif; /* 기본 글씨체 */
+    padding: 0.5rem 0.5rem; /* 좌우 패딩 줄임 */
+    font-size: 1.3rem; /* 링크 및 텍스트 폰트 크기 조정 */
+}
+
+.navbar-toggler {
+    border-color: #333; /* 토글 버튼 테두리 색상 조정 */
+    padding: 0.4rem 0.75rem; /* 버튼 크기 축소 */
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(51, 51, 51, 0.5)' stroke-width='2' stroke-linecap='round' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); /* 토글 아이콘 색상 변경 */
+}
+
+.navbar-nav {
+    align-items: center; /* 항목들 세로 중앙 정렬 */
+}
+
+/* 링크 호버 스타일 */
+.nav-link:hover {
+    background-color: transparent; /* 호버 배경색 없음 */
+    color: #555; /* 호버 시 색상 변경 */
+}
+
+/* 통합 입력 및 리스트 스타일 */
+.form-control, .list-group-item {
+    padding: 10px 15px; /* 일관된 패딩 */
+    border: 1px solid #ccc; /* 일관된 테두리 */
+    font-size: 1rem; /* 표준 폰트 크기 */
+    font-family: 'Noto Sans KR', sans-serif; /* 표준 폰트 패밀리 */
+    color: #333; /* 표준 텍스트 색상 */
+    background-color: #fff; /* 배경색 */
+    border-radius: 4px; /* 둥근 모서리 */
+    margin-bottom: 10px; /* 요소 간 간격 */
+}
+
+/* 입력 포커스 스타일 */
+.form-control:focus {
+    border-color: #555; /* 포커스 시 테두리 색상 */
+    outline: none; /* 기본 윤곽선 제거 */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 강조 효과 */
+}
+
+/* 버튼 스타일 */
+.btn-custom, .btn {
+    padding: 10px 20px;
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 1.2rem;
+    background-color: #7a7575;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover, .btn-custom:hover {
+    background-color: #555; /* 호버 시 배경색 변경 */
+}
+
+/* 헤더 스타일 */
+.header {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Black Han Sans', sans-serif; /* 헤더에 서비스 폰트 사용 */
+    color: #333;
+}
+
+/* 입력 필드와 레이블 스타일 */
+.label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #555;
 }
