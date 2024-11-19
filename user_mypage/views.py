@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MypageSignUpForm, CustomAuthenticationForm
+from .forms import MypageSignUpForm, CustomAuthenticationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required

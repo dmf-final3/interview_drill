@@ -1,10 +1,22 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 
-{% block body%}
-    <form action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% bootstrap_form form %}
-        <input type="submit">
-    </form>
+{% block body %}
+<div class="full-height-container">
+    <div class="form-container">
+        <!-- 오류 메시지 표시 -->
+        {% if form.non_field_errors %}
+            <!-- <div class="alert alert-danger">
+                <p>{{ form.non_field_errors|first }}</p>
+            </div> -->
+        {% endif %}
+
+        <!-- 로그인 폼 -->
+        <form action="" method="POST" enctype="multipart/form-data" class="w-100 mt-4" id="loginForm">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <input type="submit" value="로그인" class="btn btn-primary btn-lg w-100">
+	    </form>
+    </div>
+</div>
 {% endblock %}
