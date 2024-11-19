@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Mypage
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 class MypageSignUpForm(UserCreationForm):
@@ -47,22 +49,17 @@ class MypageSignUpForm(UserCreationForm):
     # 에러 메시지 커스터마이징
     error_messages = {
         'password_mismatch': "비밀번호가 일치하지 않습니다. 다시 확인해주세요.",
-        'unique': "이미 사용 중인 사용자 이름입니다. 다른 이름을 입력해주세요."
     }
 
     class Meta():
         model = Mypage
         fields = ('username', 'email', 'major', 'desired_job', 'password1', 'password2')
-        
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get('username')
-        
-        # 사용자 이름 중복 검증
-        if username and Mypage.objects.filter(username=username).exists():
-            self.add_error('username', "이미 사용 중인 사용자 이름입니다. 다른 이름을 입력해주세요.")
 
-        return cleaned_data
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username and Mypage.objects.filter(username=username).exists():
+            raise ValidationError(_("이미 사용 중인 사용자 이름입니다. 다른 이름을 입력해주세요."))
+        return username
 
 
 class CustomAuthenticationForm(AuthenticationForm):

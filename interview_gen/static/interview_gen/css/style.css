@@ -175,6 +175,7 @@ h1, h2 {
     width: 100%;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 5px;
 }
 
 .btn:hover, .btn-custom:hover {
@@ -201,7 +202,7 @@ h1, h2 {
 
 /* Form Container: 폼 영역을 중앙에 배치하고 고유한 스타일을 적용 */
 .form-container {
-    max-width: 400px; /* 최대 너비 */
+    max-width: 600px; /* 최대 너비 */
     width: 100%; /* 부모 요소 기준 너비 */
     padding: 20px; /* 내부 여백 */
     margin: 0 auto; /* 수평 중앙 정렬 */
