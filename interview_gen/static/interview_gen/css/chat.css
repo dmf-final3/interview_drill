@@ -1,3 +1,12 @@
+a {
+    color: #555; /* 기본 링크 색상 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+a:hover {
+    color: #999; /* 호버 시 색상 변경 */
+}
+
 /* 채팅 컨테이너 스타일 */
 .container {
     display: flex;

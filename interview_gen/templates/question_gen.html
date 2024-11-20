@@ -2,15 +2,18 @@
 {% load django_bootstrap5 %}
 
 {% block body %}
-<h2 class="mt-5"> 💡 기업 뉴스 데이터와 관련 경험을 기반으로 도출된 면접 질문입니다!</h2>
-
-<div class="container mt-4">    
-    {% if generated_question %}
-        <ol class="list-group list-group-flush">
-            {{ generated_question | safe }}
-        </ol>
-    {% else %}
-        <p>생성된 질문이 없습니다.</p>
-    {% endif %}
+<div class="full-height-container">
+    <div class="custom-container">
+        <h2 class="mt-5"> 기업 최신 뉴스와 자소서 기반으로 면접GINI가 생성한 답변입니다✨</h2>
+        <div class="container mt-4">    
+            {% if generated_question %}
+                <ol class="list-group list-group-flush">
+                {{ generated_question | safe }}
+                </ol>
+            {% else %}
+                <p>생성된 질문이 없습니다.</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

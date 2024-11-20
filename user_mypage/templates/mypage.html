@@ -1,37 +1,41 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 
-{% block title %}마이페이지{% endblock %}
-
 {% block body %}
-<div class="container">
-    <div class="profile-info mb-5">
-        <h2>{{ request.user.username }}의 프로필 정보</h2>
-        <div class="mb-3">
-            <label class="form-label"><strong>전공:</strong></label>
-            <div class="form-control" readonly>{{ major }}</div>
+<div class="full-height-container mypage">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-md-12">  <!-- 단일 열로 조정 -->
+                <div class="profile-info mb-5">
+                    <h2>{{ request.user.username }}의 프로필 정보</h2>
+                    <div class="mb-3">
+                        <div class="form-control" readonly><b>전공:</b> {{ major }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-control" readonly><b>희망직무:</b> {{ desired_job }}</div>
+                    </div>
+                </div>
+                <div class="interview-history">
+                    <h2>질문 생성 내역</h2>
+                    {% if interviews %}
+                    <ul class="list-group">
+                        {% for interview in interviews %}
+                        <li class="list-group-item my-list-item">
+                            <a href="{% url 'user_mypage:detail' interview.id %}" style="color: #333; font-size: 1.1rem;">
+                                {{ interview.company_name }}의 면접 스크립트
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>질문 생성 내역이 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>희망직무:</strong></label>
-            <div class="form-control" readonly>{{ desired_job }}</div>
+        <div class="mt-4">
+            <a href="{% url 'interview_gen:index' %}" class="btn btn-custom">면접 준비 폼으로 이동</a>
         </div>
-    </div>
-
-    <div class="interview-history">
-        <h2>질문 생성 내역</h2>
-        {% if interviews %}
-        <ul class="list-group">
-            {% for interview in interviews %}
-            <li class="list-group-item my-list-item">
-                <a href="{% url 'user_mypage:detail' interview.id %}" style="color: #333; font-size: 1.1rem;">
-                    {{ interview.company_name }}의 면접 스크립트
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>질문 생성 내역이 없습니다.</p>
-        {% endif %}
     </div>
 </div>
 {% endblock %}
