@@ -119,7 +119,7 @@ h1, h2 {
 }
 
 .nav-link, .navbar-text {
-    color: #007bff; /* 네비게이션 링크 및 텍스트 색상 */
+    color: #333; /* 네비게이션 링크 및 텍스트 색상 */
     font-family: 'Noto Sans KR', sans-serif; /* 기본 글씨체 */
     padding: 0.5rem 0.5rem; /* 좌우 패딩 줄임 */
     font-size: 1.3rem; /* 링크 및 텍스트 폰트 크기 조정 */
