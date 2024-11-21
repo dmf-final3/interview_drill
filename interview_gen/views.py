@@ -165,7 +165,7 @@ def generate(api_key, pk):
                                     * 이 질문들은 뉴스 본문 정보를 참고하여 작성하고, 뉴스 관련된 답변에만 뉴스 링크를 추가해야 해.
                                     * 참조하는 뉴스 링크는 서로 중복되지 않아야 하고 면접 질문, 답변 그리고 뉴스의 내용은 서로 연관이 있어야 돼.
                                     * 지원자는 해당 답변 시 경험 정보를 복합적으로 활용한 답변을 제시해도 좋아.
-                                    * 지원자의 답변 바로 뒤에 뉴스 링크를 넣어야 하며, 형식은 <a href="링크" target="_blank">관련 뉴스 링크 바로가기</a>와 같아야 해.
+                                    * 지원자의 답변 바로 뒤에 뉴스 링크를 넣어야 하며, 형식은 <a href="링크" target="_blank">▶ 관련 뉴스 링크 바로가기</a>와 같아야 해.
                                     
                                     - **두 번째 섹션**: 지원자의 경험 정보와 관련된 질문 3개를 작성해줘.
                                     * 면접관은 이 질문을 통해 지원자의 경험 정보에서 구체적인 예시나 일화를 유도해야해.
@@ -173,8 +173,8 @@ def generate(api_key, pk):
                                     * 이 섹션의 질문에는 뉴스 링크를 추가하지 말아줘.
 
                                     최종 출력은 HTML 형태로, 아래 예시처럼 작성해줘:
-                                    <p class="question">질문 내용 1</p><p class="answer">답변 내용 1 <br></br><a href="링크" target="_blank">관련 뉴스 링크 바로가기</a></p>
-                                    <p class="question">질문 내용 2</p><p class="answer">답변 내용 2 <br></br><a href="링크" target="_blank">관련 뉴스 링크 바로가기</a></p>
+                                    <p class="question">질문 내용 1</p><p class="answer">답변 내용 1 <br></br><a href="링크" target="_blank">▶ 관련 뉴스 링크 바로가기</a></p>
+                                    <p class="question">질문 내용 2</p><p class="answer">답변 내용 2 <br></br><a href="링크" target="_blank">▶ 관련 뉴스 링크 바로가기</a></p>
                                     <p class="question">질문 내용 3</p><p class="answer">답변 내용 3</p>
                                     <p class="question">질문 내용 4</p><p class="answer">답변 내용 4</p>
                                     <p class="question">질문 내용 5</p><p class="answer">답변 내용 5</p>
