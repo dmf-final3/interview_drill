@@ -81,7 +81,6 @@ def naver_news_crawler(company_name):
             "nso": "so:r,p:1y",     # 1년 범위 내 최신순 정렬
             "start": start,         # 시작 인덱스 (10씩 증가하여 다음 페이지로 이동)
             "display": 10,  # 한 페이지에 보여줄 기사 수
-            "start": start,
         }
         # 요청 전 최종 URL 확인용 디버그 코드
         print(f"Requesting page with start={start}, params={params}")
