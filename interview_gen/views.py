@@ -66,9 +66,8 @@ def create(request):
 
 def naver_news_crawler(company_name):
     base_url = "https://search.naver.com/search.naver"
-    
     news_list = []
-    start = 1  # 검색 시작 지점 (10개씩 넘기면서 다음 페이지로 이동)
+    start = 1  # 초기 검색 시작 지점 설정
 
     while len(news_list) < 5:  # 뉴스 기사 5개 수집할 때까지 반복
         params = {
@@ -93,13 +92,15 @@ def naver_news_crawler(company_name):
             # HTML 파싱
             soup = BeautifulSoup(response.text, 'html.parser')
             articles = soup.select('ul.list_news > li')
+            print(f"Found {len(articles)} articles.")  # 기사 수 로그
 
             if not articles:  # 더 이상 기사가 없을 경우 반복 종료
-                print("No more articles found.")
+                print("No more articles found. Ending loop.")
                 break
 
             for article in articles:
                 if len(news_list) >= 5:
+                    print("Collected enough articles. Breaking out of loop.")
                     break
                 
                 title_tag = article.select_one('a.news_tit')
@@ -112,13 +113,17 @@ def naver_news_crawler(company_name):
                     summary = summary_tag.get_text(strip=True)
                     news_item = f"{title}\n{link}\n{summary}"
                     news_list.append(news_item)
+                    print(f"Added news: {link}")
                     
         except requests.exceptions.RequestException as e:
-            print("Request failed:", e)
+            print(f"Request failed:, e")
             break
 
-        # 다음 페이지로 이동하기 위해 시작 인덱스 증가
-        start += 10
+        if len(news_list) < 5:
+            start += 10  # 필요한 경우 다음 페이지로 이동
+            print(f"Moving to next page with start index {start}.")
+        else:
+            break
     
     # 최종 수집된 뉴스 기사 리스트를 반환
     return "\n\n".join(news_list) if news_list else None
