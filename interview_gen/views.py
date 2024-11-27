@@ -131,8 +131,16 @@ def naver_news_crawler(company_name):
 
 # 크롤링한 뉴스 데이터를 데이터베이스에 저장하는 함수
 def get_news(interview_init):
-    # company_name을 기준으로 뉴스 본문을 직접 생성하여 저장
-    news_content = naver_news_crawler(interview_init.company_name)
+    try:
+        # company_name을 기준으로 뉴스 본문을 직접 생성하여 저장
+        news_content = naver_news_crawler(interview_init.company_name)
+        # news_content가 비어 있는 경우 기본 메시지 설정
+        if not news_content:
+            news_content = "뉴스 데이터가 없습니다."
+    except Exception as e:
+        # 오류 발생 시 기본 메시지 설정
+        news_content = "뉴스 데이터가 없습니다."
+        print(f"Error during news crawling: {e}")
     interview_init.news_group = news_content
     interview_init.save()
 
